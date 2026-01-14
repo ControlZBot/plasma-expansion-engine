@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orison | Plasmatic Propulsion Systems</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-color: #060608;
+            --text-main: #e0e0e0;
+            --accent-plasma: #b0fb5d; 
+            --accent-electric: #7df9ff; 
+            --panel-bg: rgba(20, 20, 24, 0.8);
+            --border-color: #2a2a2e;
+            --font-head: 'Space Grotesk', sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; scroll-behavior: smooth; }
+        
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            font-family: var(--font-head); 
+            line-height: 1.6; 
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- Background Effects --- */
+        .bg-gradient {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #060608 100%);
+            z-index: -2;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        /* --- Content Layout --- */
+        header { 
+            padding: 8rem 2rem 4rem; 
+            border-bottom: 1px solid var(--border-color); 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            text-align: center; 
+        }
+
+        h1 { font-size: 4rem; text-transform: uppercase; letter-spacing: -2px; line-height: 1.1; margin-bottom: 1rem; }
+        .highlight { color: var(--accent-plasma); text-shadow: 0 0 20px rgba(176, 251, 93, 0.3); }
+        .subtitle { font-family: var(--font-code); color: var(--accent-electric); font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+        
+        section { 
+            display: grid; 
+            grid-template-columns: 1.2fr 0.8fr; 
+            gap: 4rem; 
+            padding: 8rem 0; 
+            border-bottom: 1px solid var(--border-color); 
+        }
+
+        @media (max-width: 768px) { 
+            section { grid-template-columns: 1fr; gap: 2rem; } 
+            h1 { font-size: 2.8rem; } 
+        }
+
+        h2 { font-size: 2.2rem; margin-bottom: 1.5rem; position: relative; display: inline-block; color: #fff; }
+        h2::after { content: ' ◈'; color: var(--accent-electric); font-size: 1.2rem; }
+        
+        p { font-size: 1.1rem; margin-bottom: 1.5rem; color: #bbb; text-align: justify; }
+        b, strong { color: var(--accent-plasma); font-weight: 700; }
+        
+        .narrative-block { padding-right: 2rem; }
+
+        .theory-card { 
+            background: var(--panel-bg); 
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color); 
+            padding: 2.5rem; 
+            font-family: var(--font-code); 
+            font-size: 0.95rem; 
+            border-left: 4px solid var(--accent-plasma); 
+            align-self: start; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .theory-title { color: var(--accent-plasma); text-transform: uppercase; font-weight: bold; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 10px; font-size: 1.1rem; }
+        .equation-box { background: rgba(0,0,0,0.8); padding: 1.5rem; margin: 1.5rem 0; border-radius: 4px; border: 1px solid #444; text-align: center; color: var(--accent-electric); }
+        
+        ul { list-style: none; }
+        li { margin-bottom: 1rem; padding-left: 1.8rem; position: relative; color: #ddd; }
+        li::before { content: '⫸'; position: absolute; left: 0; color: var(--accent-plasma); font-size: 0.9rem; }
+
+        .social-section {
+            background: linear-gradient(135deg, rgba(20, 20, 24, 0.9), rgba(10, 10, 12, 1));
+            border: 1px solid #5865F2;
+            color: white;
+            padding: 5rem 3rem;
+            border-radius: 12px;
+            text-align: center;
+            margin: 6rem 0;
+            box-shadow: 0 0 40px rgba(88, 101, 242, 0.1);
+        }
+
+        .discord-btn {
+            display: inline-block;
+            background: #5865F2;
+            color: white;
+            padding: 1.2rem 3rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: var(--font-code);
+            margin-top: 2rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid transparent;
+        }
+        .discord-btn:hover { background: transparent; border-color: #5865F2; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(88, 101, 242, 0.4); }
+
+        footer { padding: 6rem 0; text-align: center; color: #555; font-size: 0.9rem; border-top: 1px solid var(--border-color); }
+
+        .icon-symbol { font-style: normal; color: var(--accent-plasma); text-shadow: 0 0 10px var(--accent-plasma); }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-gradient"></div>
+    <canvas id="bg-canvas"></canvas>
+
+    <header>
+        <div class="subtitle">Orison Executive Intelligence | Chief Architect: **XY**</div>
+        <h1>THE PLASMATIC <span class="highlight">COMBUSTION</span> ENGINE</h1>
+        <p style="font-family: var(--font-code); color: #888; margin-top: 1rem;">Propulsion logic re-engineered for the zero-friction era.</p>
+    </header>
+
+    <div class="container">
+        
+        <!-- SECTION 0: IDENTITY -->
+        <section id="identity">
+            <div class="narrative-block">
+                <h2>00. The Orison Collective</h2>
+                <p>Orison is spearheaded by a dedicated team of high-potential technology enthusiasts—a collective of innovation-driven architects who refuse to accept the stagnancy of legacy fuel systems. We operate as a tactical R&D unit focused on ensuring that cars, fuel cycles, and generators function with the thermodynamic precision that modern physics demands.</p>
+                <p>Led by **XY**, our operations reside at the threshold of high-energy physics and advanced hardware integration. We believe that current global energy standards are suboptimal. Our mission is to provide the bridge between elite-tier technical research and professional-grade industrial breakthroughs. Orison serves as the vessel for our collective intelligence.</p>
+                <p>We are building a future where propulsion is no longer tethered to the slow expansion of chemical flames, but powered by the near-instantaneous kinetic force of **plasmatic states**.</p>
+            </div>
+            <div class="theory-card">
+                <span class="theory-title"><i class="icon-symbol">⌬</i> Operational Matrix</span>
+                <ul>
+                    <li>High-Frequency Ignition Logic</li>
+                    <li>Ionized Gas Stability Controls</li>
+                    <li>Thermal-to-Kinetic Optimization</li>
+                    <li>Zero-Contact Magnetic Transmission</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SECTION 1: TECHNOLOGY -->
+        <section id="technology">
+            <div class="narrative-block">
+                <h2>01. Plasmatic Pulse Architecture</h2>
+                <p>The **Plasmatic Combustion Engine (PCE)** utilizes a specialized "Plasmatic Pulse"—a sub-millisecond expansion phase where inert gas is transitioned into a high-temperature plasma state. Unlike traditional engines that wait for a flame front to travel through a cylinder, the PCE triggers a **dielectric breakdown** of the gas, resulting in a volumetric expansion that is almost instantaneous.</p>
+                <p>This creates a massive pressure spike (**$P_{plasma}$**) without the carbon footprint of fossil fuels. By stripping the nuclei of our working gas through high-voltage ionization, we create a high-energy state that occupies significantly more volume than its precursor. This allows the PCE to function as a modular power core, adaptable for both high-performance vehicular drivetrains and stationary industrial power generators.</p>
+                <p>We are currently refining the borosilicate chamber geometry to mitigate thermal equilibrium issues during long-duration operation. Our current resource allocation involves the sourcing of high-permeability flux materials to ensure the **Lorentz force interaction** is perfectly contained within the expansion zone.</p>
+            </div>
+            <div class="theory-card">
+                <span class="theory-title"><i class="icon-symbol">⚛</i> Plasma State Theory</span>
+                <p>The transition energy (**$E_{plasma}$**) is calculated by the density of the working gas and the pulse frequency.</p>
+                <div class="equation-box">
+                    $$ E_{pulse} = \int_{t_0}^{t_1} V(t) I(t) dt $$
+                </div>
+                <p>Architects at Orison are focusing on synchronization protocols to ensure the plasma expansion occurs at exactly Top Dead Center (**TDC**).</p>
+            </div>
+        </section>
+
+        <!-- SECTION 2: PERFORMANCE -->
+        <section id="performance">
+            <div class="narrative-block">
+                <h2>02. Performance Scaling: 1000+ HP</h2>
+                <p>The core advantage of the PCE architecture is its vertical scalability. Traditional internal combustion engines are limited by the speed of chemical combustion. Because plasma expands at the speed of an electrical discharge, the potential for horsepower output is limited only by the structural integrity of the chamber and the voltage of the ignition array.</p>
+                <p>By increasing the frequency of the ionization pulses, a single PCE module can generate **thousands of horsepower**. We achieve this by optimizing the **Ionization Density**. When more gas is converted into plasma in a shorter time frame, the torque output increases exponentially.</p>
+                <p>In our current simulations, the PCE exhibits a power-to-weight ratio that is **12x higher** than standard high-performance engines. This allows for massive energy output in a compact, modular form factor. Our future roadmap involves stacking these PCE modules to provide massive energy for generators and large-scale industrial propulsion.</p>
+            </div>
+            <div class="theory-card">
+                <span class="theory-title"><i class="icon-symbol">⚡</i> Power Metrics</span>
+                <p>Horsepower in the PCE is a function of Pulse Frequency (**$f$**) and Plasmatic Torque (**$\tau$**).</p>
+                <div class="equation-box">
+                    $$ HP_{PCE} = \frac{\tau \cdot (f \times 60)}{5252} $$
+                </div>
+                <p>By targeting **10,000 PPM** (Pulses Per Minute), the Orison team can deliver consistent high-torque outputs for heavy-duty applications.</p>
+            </div>
+        </section>
+
+        <!-- SECTION 3: GENERATORS -->
+        <section id="generators">
+            <div class="narrative-block">
+                <h2>03. Future Utility: Plasmatic Generators</h2>
+                <p>Beyond propulsion, Orison is engineering the PCE architecture to serve as the world's most efficient **stationary power generator**. By utilizing the high-torque output of the plasmatic expansion and coupling it with our frictionless magnetic gearing, we can produce massive electrical potential with virtually zero mechanical wear.</p>
+                <p>These generators are designed to replace legacy diesel and gas units, providing a cleaner, more reliable energy source for off-grid industrial facilities. **XY**'s vision is to modularize the PCE so that power can be scaled from a residential back-up unit to a city-wide energy node.</p>
+            </div>
+            <div class="theory-card">
+                <span class="theory-title"><i class="icon-symbol">⚙</i> Efficiency Coeff.</span>
+                <ul>
+                    <li>Zero-Friction Energy Transfer</li>
+                    <li>Atmospheric Gas Independence</li>
+                    <li>Modular Stackability</li>
+                    <li>High-Frequency AC Output</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- SOCIAL SECTION -->
+        <div class="social-section">
+            <h2><i class="icon-symbol">🌐</i> Join the Intelligence Network</h2>
+            <p>Orison is a collective of technology enthusiasts scaling the future of high-energy physics. We utilize our community hub to coordinate early-stage modeling, discuss gas-to-plasma conversion theories, and share the roadmap for **XY**'s propulsion revolution.</p>
+            <p>We will use this community to share findings until Orison establishes a full-scale industrial footprint. Support is greatly appreciated.</p>
+            <a href="https://discord.gg/29ERYMaaJE" class="discord-btn" target="_blank">ACCESS ORISON DISCORD</a>
+        </div>
+
+        <footer>
+            <p>Founded & Led by **XY**. &copy; 2026 Orison Propulsion Systems.</p>
+            <p style="margin-top: 0.5rem; font-family: var(--font-code);">Project Status: <span style="color: var(--accent-plasma)">SCALING</span> | Version: 3.2.0-PRO</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // Particle Background Script
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2;
+                this.speedX = Math.random() * 0.5 - 0.25;
+                this.speedY = Math.random() * 0.5 - 0.25;
+                this.opacity = Math.random();
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(125, 249, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function init() {
+            particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+
+        init();
+        animate();
+    </script>
+
+</body>
+</html>
